@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>El verbo SER — Actividades interactivas</title>
+<style>
+  :root{
+    --navy:#2F3C7E;
+    --navy-dark:#212A5E;
+    --coral:#F96167;
+    --coral-dark:#DD474D;
+    --gold:#F9E795;
+    --gold-deep:#EAC33E;
+    --ink:#2B2E3D;
+    --muted:#6E7180;
+    --card:#F7F5EF;
+    --line:#E1DED2;
+    --success:#2E9E6D;
+    --success-bg:#E7F6EF;
+    --error:#C1272D;
+    --error-bg:#FBEAEA;
+    --white:#FFFFFF;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color:var(--ink);
+    background:var(--white);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:Georgia,"Cambria","Times New Roman",serif; margin:0;}
+  button{font-family:inherit; cursor:pointer;}
+
+  /* ---------- Header ---------- */
+  header{
+    background:var(--navy);
+    color:var(--white);
+    padding:18px 20px 14px;
+    position:sticky; top:0; z-index:20;
+  }
+  .header-row{
+    display:flex; align-items:center; gap:14px; max-width:1000px; margin:0 auto;
+  }
+  .badge{
+    width:52px; height:52px; border-radius:50%;
+    background:var(--coral); color:var(--white);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:15px; flex-shrink:0;
+    font-family:Georgia, serif;
+  }
+  .header-text h1{font-size:22px; font-weight:700;}
+  .header-text p{margin:2px 0 0; font-size:13px; font-style:italic; color:#C7CCEC;}
+
+  nav.tabs{
+    max-width:1000px; margin:16px auto 0;
+    display:flex; gap:8px; flex-wrap:wrap;
+  }
+  .tab-btn{
+    border:none; border-radius:999px; padding:10px 16px;
+    background:#3B478C; color:#D8DBF3; font-size:14px; font-weight:600;
+    display:flex; align-items:center; gap:8px; min-height:44px;
+  }
+  .tab-btn .dot{
+    width:20px; height:20px; border-radius:50%; background:rgba(255,255,255,0.25);
+    display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0;
+  }
+  .tab-btn.active{background:var(--coral); color:var(--white);}
+  .tab-btn.active .dot{background:rgba(255,255,255,0.35);}
+  .tab-btn.done .dot{background:var(--gold); color:var(--navy-dark);}
+
+  /* ---------- Main layout ---------- */
+  main{max-width:1000px; margin:0 auto; padding:26px 20px 70px;}
+  .panel{display:none;}
+  .panel.active{display:block; animation:fadein .25s ease;}
+  @keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .activity-title h2{font-size:26px; color:var(--navy);}
+  .activity-title p{margin:6px 0 22px; font-size:14.5px; font-style:italic; color:var(--muted);}
+
+  .card{
+    background:var(--card); border-radius:14px; padding:22px;
+    box-shadow:0 2px 10px rgba(43,46,61,0.06);
+  }
+
+  .btn{
+    border:none; border-radius:10px; padding:13px 20px; font-size:16px; font-weight:600;
+    min-height:48px; background:var(--navy); color:var(--white);
+  }
+  .btn.secondary{background:var(--white); color:var(--navy); border:1.5px solid var(--line);}
+  .btn.coral{background:var(--coral); color:var(--white);}
+  .btn:disabled{opacity:.45;}
+  .btn-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:20px;}
+
+  .feedback{
+    margin-top:16px; padding:12px 16px; border-radius:10px; font-size:15px; font-weight:600;
+    display:none;
+  }
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--success-bg); color:var(--success);}
+  .feedback.bad{background:var(--error-bg); color:var(--error);}
+
+  /* ---------- Activity 1: Match ---------- */
+  .match-wrap{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .match-col{display:flex; flex-direction:column; gap:10px;}
+  .match-item{
+    background:var(--white); border:2px solid var(--line); border-radius:10px;
+    padding:14px 16px; font-size:17px; font-weight:600; color:var(--ink);
+    min-height:48px; display:flex; align-items:center; justify-content:center;
+    text-align:center;
+  }
+  .match-item.selected{border-color:var(--navy); background:#EEF0FA;}
+  .match-item.matched{border-color:var(--success); background:var(--success-bg); color:var(--success);}
+  .match-item.wrong{border-color:var(--error); background:var(--error-bg);}
+  .progress-line{margin-top:18px; font-size:14px; color:var(--muted);}
+
+  /* ---------- Activity 2 & 5: MCQ ---------- */
+  .q-count{font-size:13px; color:var(--muted); margin-bottom:6px;}
+  .q-text{font-size:20px; font-weight:700; color:var(--navy); margin-bottom:18px;}
+  .choices{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .choice-btn{
+    background:var(--white); border:2px solid var(--line); border-radius:10px;
+    padding:16px; font-size:17px; font-weight:600; min-height:56px;
+  }
+  .choice-btn.correct{border-color:var(--success); background:var(--success-bg); color:var(--success);}
+  .choice-btn.incorrect{border-color:var(--error); background:var(--error-bg); color:var(--error);}
+  .choice-btn:disabled{opacity:.85;}
+  .score-line{font-size:15px; color:var(--muted); margin-top:16px;}
+  .final-screen{text-align:center; padding:30px 10px;}
+  .final-screen .big-score{font-size:52px; font-weight:700; color:var(--navy); font-family:Georgia,serif;}
+  .final-screen p{color:var(--muted); font-size:15px; margin-top:6px;}
+
+  /* ---------- Activity 3: DOCTOR sort ---------- */
+  .sentence-box{
+    background:var(--white); border-radius:12px; padding:22px; text-align:center;
+    font-size:22px; font-weight:700; color:var(--navy); border:2px dashed var(--gold-deep);
+    margin-bottom:20px;
+  }
+  .doctor-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;}
+  .doctor-btn{
+    background:var(--white); border:2px solid var(--line); border-radius:12px;
+    padding:12px 8px; display:flex; flex-direction:column; align-items:center; gap:4px;
+    min-height:78px;
+  }
+  .doctor-btn .letter{
+    width:34px; height:34px; border-radius:50%; background:var(--navy); color:var(--white);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px;
+  }
+  .doctor-btn .label{font-size:11.5px; color:var(--muted); text-align:center; line-height:1.2;}
+  .doctor-btn.correct{border-color:var(--success); background:var(--success-bg);}
+  .doctor-btn.incorrect{border-color:var(--error); background:var(--error-bg);}
+  .doctor-btn.correct .letter{background:var(--success);}
+  .doctor-btn.incorrect .letter{background:var(--error);}
+
+  /* ---------- Activity 4: Sentence builder ---------- */
+  .build-area{
+    min-height:66px; background:var(--white); border:2px dashed var(--line); border-radius:12px;
+    padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:16px;
+  }
+  .build-area .placeholder{color:var(--muted); font-size:14px; font-style:italic;}
+  .word-chip{
+    background:var(--navy); color:var(--white); border:none; border-radius:8px;
+    padding:11px 16px; font-size:16px; font-weight:600; min-height:44px;
+  }
+  .word-bank{display:flex; flex-wrap:wrap; gap:10px;}
+  .word-chip.bank{background:var(--white); color:var(--navy); border:2px solid var(--line);}
+  .word-chip.bank:disabled{opacity:.3;}
+
+  .final-emoji{font-size:46px;}
+
+  /* ---------- Activity 6: Share results ---------- */
+  .name-row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;}
+  .name-row label{font-size:14px; font-weight:600; color:var(--navy);}
+  .name-row input{
+    flex:1; min-width:200px; border:2px solid var(--line); border-radius:10px;
+    padding:12px 14px; font-size:16px; min-height:48px; font-family:inherit;
+  }
+  .results-card{
+    background:var(--white); border:2px solid var(--line); border-radius:14px;
+    padding:22px; max-width:560px; margin:0 auto 22px;
+  }
+  .results-card .rc-header{display:flex; align-items:center; gap:12px; margin-bottom:16px;}
+  .results-card .rc-badge{
+    width:40px; height:40px; border-radius:50%; background:var(--coral); color:var(--white);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px;
+    font-family:Georgia,serif; flex-shrink:0;
+  }
+  .results-card .rc-title{font-family:Georgia,serif; font-weight:700; color:var(--navy); font-size:18px;}
+  .results-card .rc-meta{font-size:12.5px; color:var(--muted);}
+  .rc-row{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:10px 0; border-bottom:1px solid var(--line); font-size:14.5px;
+  }
+  .rc-row:last-of-type{border-bottom:none;}
+  .rc-row .rc-label{font-weight:600; color:var(--ink);}
+  .rc-row .rc-score{font-weight:700; color:var(--success);}
+  .rc-row .rc-pending{font-weight:600; color:var(--muted); font-style:italic; font-size:13px;}
+  .rc-total{
+    margin-top:14px; padding-top:14px; border-top:2px solid var(--navy);
+    display:flex; justify-content:space-between; font-weight:700; color:var(--navy); font-size:16px;
+  }
+  .share-actions{display:flex; flex-direction:column; gap:14px; max-width:560px; margin:0 auto;}
+  .share-option{background:var(--card); border-radius:12px; padding:16px;}
+  .share-option h3{font-size:15px; color:var(--navy); margin-bottom:4px;}
+  .share-option p{font-size:13px; color:var(--muted); margin:0 0 12px;}
+  .share-status{font-size:13px; margin-top:10px; font-weight:600; display:none;}
+  .share-status.show{display:block;}
+  .share-status.ok{color:var(--success);}
+  .share-status.bad{color:var(--error);}
+  .screenshot-note{font-size:13px; color:var(--muted); text-align:center; margin-top:6px; font-style:italic;}
+
+  footer{
+    text-align:center; padding:18px; font-size:12.5px; color:var(--muted);
+  }
+
+  @media (max-width:640px){
+    .match-wrap{grid-template-columns:1fr;}
+    .choices{grid-template-columns:1fr;}
+    .doctor-grid{grid-template-columns:1fr 1fr;}
+    .header-text h1{font-size:19px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div class="badge">SER</div>
+    <div class="header-text">
+      <h1>Actividades interactivas: el verbo SER</h1>
+      <p>Interactive practice activities — tap to answer, no typing needed</p>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+
+<main id="main"></main>
+
+<footer>Toca las tarjetas para responder · Tap the cards to answer</footer>
+
+<script>
+/* ==================== Shared state ==================== */
+const activityDone = [false, false, false, false, false, false];
+
+const ACTIVITIES = [
+  { id: 0, es: "Empareja", en: "Match" },
+  { id: 1, es: "Completa", en: "Fill in" },
+  { id: 2, es: "Clasifica", en: "Classify" },
+  { id: 3, es: "Construye", en: "Build" },
+  { id: 4, es: "Repaso final", en: "Final review" },
+  { id: 5, es: "Comparte", en: "Share", isShare: true },
+];
+const activityResults = [null, null, null, null, null];
+
+function renderTabs(activeIndex){
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = '';
+  ACTIVITIES.forEach((a, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i === activeIndex ? ' active' : '') + (activityDone[i] ? ' done' : '');
+    let dotContent;
+    if (a.isShare){
+      dotContent = '📤';
+    } else {
+      dotContent = activityDone[i] ? '✓' : (i+1);
+    }
+    btn.innerHTML = `<span class="dot">${dotContent}</span> ${a.es}`;
+    btn.onclick = () => showActivity(i);
+    tabs.appendChild(btn);
+  });
+}
+
+function markDone(i, resultLabel){
+  activityDone[i] = true;
+  if (resultLabel !== undefined) activityResults[i] = resultLabel;
+  renderTabs(currentActivity);
+}
+
+let currentActivity = 0;
+function showActivity(i){
+  currentActivity = i;
+  renderTabs(i);
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+  const renderFns = [renderActivity1, renderActivity2, renderActivity3, renderActivity4, renderActivity5, renderActivity6];
+  renderFns[i](main);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ==================== Activity 1: Match pronouns ↔ SER forms ==================== */
+function renderActivity1(main){
+  const pairs = [
+    ["Yo", "soy"],
+    ["Tú", "eres"],
+    ["Él / Ella / Usted", "es"],
+    ["Nosotros/as", "somos"],
+    ["Vosotros/as", "sois"],
+    ["Ellos/as / Ustedes", "son"],
+  ];
+  const left = shuffle(pairs.map((p, i) => ({text: p[0], id: i})));
+  const right = shuffle(pairs.map((p, i) => ({text: p[1], id: i})));
+  let selectedLeft = null, selectedRight = null, matchedCount = 0;
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="activity-title">
+      <h2>Actividad 1 · Empareja los pronombres con SER</h2>
+      <p>Activity 1: Match the pronoun with its SER form. Tap one card from each column.</p>
+    </div>
+    <div class="card">
+      <div class="match-wrap">
+        <div class="match-col" id="colLeft"></div>
+        <div class="match-col" id="colRight"></div>
+      </div>
+      <div class="progress-line" id="matchProgress">0 de 6 emparejados / 0 of 6 matched</div>
+      <div class="feedback" id="matchFeedback"></div>
+    </div>
+  `;
+  main.appendChild(wrap);
+
+  const colLeft = wrap.querySelector('#colLeft');
+  const colRight = wrap.querySelector('#colRight');
+  const progressEl = wrap.querySelector('#matchProgress');
+  const feedbackEl = wrap.querySelector('#matchFeedback');
+  let inputLocked = false;
+
+  function makeButton(item, side){
+    const b = document.createElement('button');
+    b.className = 'match-item';
+    b.textContent = item.text;
+    b.dataset.id = item.id;
+    b.onclick = () => onPick(item, side, b);
+    return b;
+  }
+  left.forEach(item => colLeft.appendChild(makeButton(item, 'left')));
+  right.forEach(item => colRight.appendChild(makeButton(item, 'right')));
+
+  function clearSelection(side){
+    const col = side === 'left' ? colLeft : colRight;
+    col.querySelectorAll('.match-item.selected').forEach(el => el.classList.remove('selected'));
+  }
+
+  function onPick(item, side, btn){
+    if (inputLocked) return;
+    if (btn.classList.contains('matched')) return;
+    if (side === 'left'){
+      clearSelection('left');
+      btn.classList.add('selected');
+      selectedLeft = {item, btn};
+    } else {
+      clearSelection('right');
+      btn.classList.add('selected');
+      selectedRight = {item, btn};
+    }
+    if (selectedLeft && selectedRight){
+      checkPair();
+    }
+  }
+
+  function checkPair(){
+    const leftPick = selectedLeft, rightPick = selectedRight;
+    const isMatch = leftPick.item.id === rightPick.item.id;
+    if (isMatch){
+      [leftPick.btn, rightPick.btn].forEach(el => {
+        el.classList.remove('selected');
+        el.classList.add('matched');
+        el.disabled = true;
+      });
+      matchedCount++;
+      progressEl.textContent = `${matchedCount} de 6 emparejados / ${matchedCount} of 6 matched`;
+      selectedLeft = null; selectedRight = null;
+      if (matchedCount === 6){
+        feedbackEl.textContent = '¡Excelente! Emparejaste todos los pronombres. / Great job — you matched them all!';
+        feedbackEl.className = 'feedback show ok';
+        markDone(0, `${matchedCount} de 6 / ${matchedCount} of 6`);
+      }
+    } else {
+      inputLocked = true;
+      [leftPick.btn, rightPick.btn].forEach(el => el.classList.add('wrong'));
+      selectedLeft = null; selectedRight = null;
+      setTimeout(() => {
+        [leftPick.btn, rightPick.btn].forEach(el => {
+          el.classList.remove('selected', 'wrong');
+        });
+        inputLocked = false;
+      }, 550);
+    }
+  }
+}
+
+/* ==================== Activity 2: Fill in the blank (MCQ) ==================== */
+const FILL_QUESTIONS = [
+  { text: "Yo _______ estudiante de sexto grado.", options: ["soy","eres","es","somos"], answer: "soy" },
+  { text: "Tú _______ mi compañero/a de clase.", options: ["es","eres","son","soy"], answer: "eres" },
+  { text: "Ellos _______ muy simpáticos.", options: ["es","somos","son","eres"], answer: "son" },
+  { text: "Nosotros _______ de San Francisco.", options: ["son","somos","es","soy"], answer: "somos" },
+  { text: "Hoy _______ lunes.", options: ["soy","son","es","somos"], answer: "es" },
+];
+
+function renderActivity2(main){
+  let index = 0, score = 0, locked = false;
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="activity-title">
+      <h2>Actividad 2 · Completa las frases</h2>
+      <p>Activity 2: Choose the correct form of SER to complete each sentence.</p>
+    </div>
+    <div class="card" id="q2card"></div>
+  `;
+  main.appendChild(wrap);
+  const card = wrap.querySelector('#q2card');
+
+  function renderQuestion(){
+    locked = false;
+    const q = FILL_QUESTIONS[index];
+    const opts = shuffle(q.options);
+    card.innerHTML = `
+      <div class="q-count">Pregunta ${index+1} de ${FILL_QUESTIONS.length} / Question ${index+1} of ${FILL_QUESTIONS.length}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="choices">${opts.map(o => `<button class="choice-btn" data-opt="${o}">${o}</button>`).join('')}</div>
+      <div class="feedback" id="f2"></div>
+      <div class="score-line">Puntaje / Score: ${score} de ${index}</div>
+    `;
+    card.querySelectorAll('.choice-btn').forEach(btn => {
+      btn.onclick = () => {
+        if (locked) return;
+        locked = true;
+        const chosen = btn.dataset.opt;
+        const feedback = card.querySelector('#f2');
+        card.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+        if (chosen === q.answer){
+          btn.classList.add('correct');
+          score++;
+          feedback.textContent = '¡Correcto! / Correct!';
+          feedback.className = 'feedback show ok';
+        } else {
+          btn.classList.add('incorrect');
+          card.querySelectorAll('.choice-btn').forEach(b => { if (b.dataset.opt === q.answer) b.classList.add('correct'); });
+          feedback.textContent = `No exactamente. La respuesta es "${q.answer}". / Not quite — the answer is "${q.answer}".`;
+          feedback.className = 'feedback show bad';
+        }
+        const btnRow = document.createElement('div');
+        btnRow.className = 'btn-row';
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn coral';
+        nextBtn.textContent = index < FILL_QUESTIONS.length - 1 ? 'Siguiente / Next' : 'Ver resultado / See result';
+        nextBtn.onclick = () => {
+          index++;
+          if (index < FILL_QUESTIONS.length) renderQuestion();
+          else renderFinal();
+        };
+        btnRow.appendChild(nextBtn);
+        card.appendChild(btnRow);
+      };
+    });
+  }
+
+  function renderFinal(){
+    card.innerHTML = `
+      <div class="final-screen">
+        <div class="final-emoji">${score === FILL_QUESTIONS.length ? '🎉' : '👍'}</div>
+        <div class="big-score">${score} / ${FILL_QUESTIONS.length}</div>
+        <p>Respuestas correctas / Correct answers</p>
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn secondary" id="retryA2">Intentar de nuevo / Try again</button>
+        </div>
+      </div>
+    `;
+    card.querySelector('#retryA2').onclick = () => { index = 0; score = 0; renderQuestion(); };
+    markDone(1, `${score} / ${FILL_QUESTIONS.length}`);
+  }
+
+  renderQuestion();
+}
+
+/* ==================== Activity 3: Classify with D.O.C.T.O.R. ==================== */
+const DOCTOR_CATEGORIES = [
+  { key: "D", label: "Descripción física", en:"Physical description" },
+  { key: "O1", key2:"O", label: "Ocupación", en:"Occupation" },
+  { key: "C", label: "Características", en:"Personality" },
+  { key: "T", label: "Tiempo / fecha", en:"Time / date" },
+  { key: "O2", key2:"O", label: "Origen", en:"Origin" },
+  { key: "R", label: "Relación", en:"Relationship" },
+];
+const DOCTOR_SENTENCES = [
+  { text: "Ella es alta.", cat: "D" },
+  { text: "Él es médico.", cat: "O1" },
+  { text: "Ellos son muy simpáticos.", cat: "C" },
+  { text: "Hoy es lunes.", cat: "T" },
+  { text: "Nosotros somos de México.", cat: "O2" },
+  { text: "Ella es mi hermana.", cat: "R" },
+  { text: "Yo soy estudiante.", cat: "O1" },
+  { text: "Tú eres muy inteligente.", cat: "C" },
+];
+
+function renderActivity3(main){
+  let index = 0, score = 0, locked = false;
+  const order = shuffle(DOCTOR_SENTENCES.map((s,i) => i));
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="activity-title">
+      <h2>Actividad 3 · Clasifica con D.O.C.T.O.R.</h2>
+      <p>Activity 3: Read the sentence and tap the D.O.C.T.O.R. category it belongs to.</p>
+    </div>
+    <div class="card" id="q3card"></div>
+  `;
+  main.appendChild(wrap);
+  const card = wrap.querySelector('#q3card');
+
+  function renderRound(){
+    locked = false;
+    const s = DOCTOR_SENTENCES[order[index]];
+    card.innerHTML = `
+      <div class="q-count">Frase ${index+1} de ${DOCTOR_SENTENCES.length} / Sentence ${index+1} of ${DOCTOR_SENTENCES.length}</div>
+      <div class="sentence-box">${s.text}</div>
+      <div class="doctor-grid">
+        ${DOCTOR_CATEGORIES.map(c => `
+          <button class="doctor-btn" data-cat="${c.key}">
+            <span class="letter">${c.key2 || c.key}</span>
+            <span class="label">${c.label}<br><em>${c.en}</em></span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="feedback" id="f3"></div>
+    `;
+    card.querySelectorAll('.doctor-btn').forEach(btn => {
+      btn.onclick = () => {
+        if (locked) return;
+        locked = true;
+        const chosen = btn.dataset.cat;
+        const feedback = card.querySelector('#f3');
+        card.querySelectorAll('.doctor-btn').forEach(b => b.disabled = true);
+        if (chosen === s.cat){
+          btn.classList.add('correct');
+          score++;
+          feedback.textContent = '¡Correcto! / Correct!';
+          feedback.className = 'feedback show ok';
+        } else {
+          btn.classList.add('incorrect');
+          card.querySelectorAll('.doctor-btn').forEach(b => { if (b.dataset.cat === s.cat) b.classList.add('correct'); });
+          const correctCat = DOCTOR_CATEGORIES.find(c => c.key === s.cat);
+          feedback.textContent = `Categoría correcta: ${correctCat.label} / Correct category: ${correctCat.en}`;
+          feedback.className = 'feedback show bad';
+        }
+        const btnRow = document.createElement('div');
+        btnRow.className = 'btn-row';
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn coral';
+        nextBtn.textContent = index < DOCTOR_SENTENCES.length - 1 ? 'Siguiente / Next' : 'Ver resultado / See result';
+        nextBtn.onclick = () => {
+          index++;
+          if (index < DOCTOR_SENTENCES.length) renderRound();
+          else renderFinal();
+        };
+        btnRow.appendChild(nextBtn);
+        card.appendChild(btnRow);
+      };
+    });
+  }
+
+  function renderFinal(){
+    card.innerHTML = `
+      <div class="final-screen">
+        <div class="final-emoji">${score >= 7 ? '🩺' : '👍'}</div>
+        <div class="big-score">${score} / ${DOCTOR_SENTENCES.length}</div>
+        <p>Clasificaciones correctas / Correct classifications</p>
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn secondary" id="retryA3">Intentar de nuevo / Try again</button>
+        </div>
+      </div>
+    `;
+    card.querySelector('#retryA3').onclick = () => { index = 0; score = 0; renderRound(); };
+    markDone(2, `${score} / ${DOCTOR_SENTENCES.length}`);
+  }
+
+  renderRound();
+}
+
+/* ==================== Activity 4: Sentence builder ==================== */
+const BUILD_ROUNDS = [
+  { words: ["mi", "hermana", "es", "Ella"], answer: "Ella es mi hermana" },
+  { words: ["de", "somos", "México", "Nosotros"], answer: "Nosotros somos de México" },
+  { words: ["maestro", "él", "es"], answer: "él es maestro" },
+  { words: ["lunes", "hoy", "es"], answer: "hoy es lunes" },
+  { words: ["simpáticos", "son", "muy", "ellos"], answer: "ellos son muy simpáticos" },
+];
+
+function renderActivity4(main){
+  let index = 0, solvedCount = 0;
+  let built = [];
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="activity-title">
+      <h2>Actividad 4 · Construye la frase</h2>
+      <p>Activity 4: Tap the words in order to build a correct sentence with SER.</p>
+    </div>
+    <div class="card" id="q4card"></div>
+  `;
+  main.appendChild(wrap);
+  const card = wrap.querySelector('#q4card');
+
+  function renderRound(){
+    built = [];
+    const round = BUILD_ROUNDS[index];
+    const bankWords = shuffle(round.words.map((w, i) => ({text: w, id: i})));
+    card.innerHTML = `
+      <div class="q-count">Ronda ${index+1} de ${BUILD_ROUNDS.length} / Round ${index+1} of ${BUILD_ROUNDS.length}</div>
+      <div class="build-area" id="buildArea"><span class="placeholder">Toca las palabras abajo / Tap the words below</span></div>
+      <div class="word-bank" id="wordBank"></div>
+      <div class="feedback" id="f4"></div>
+      <div class="btn-row">
+        <button class="btn secondary" id="clearBtn">Borrar / Clear</button>
+        <button class="btn coral" id="checkBtn">Revisar / Check</button>
+      </div>
+    `;
+    const bankEl = card.querySelector('#wordBank');
+    bankWords.forEach(w => {
+      const chip = document.createElement('button');
+      chip.className = 'word-chip bank';
+      chip.textContent = w.text;
+      chip.dataset.id = w.id;
+      chip.onclick = () => {
+        chip.disabled = true;
+        built.push(w);
+        renderBuildArea();
+      };
+      bankEl.appendChild(chip);
+    });
+
+    card.querySelector('#clearBtn').onclick = () => {
+      built = [];
+      bankEl.querySelectorAll('.word-chip').forEach(c => c.disabled = false);
+      renderBuildArea();
+      card.querySelector('#f4').className = 'feedback';
+    };
+
+    card.querySelector('#checkBtn').onclick = () => {
+      const attempt = built.map(w => w.text).join(' ').toLowerCase().replace(/[.,]/g,'').trim();
+      const target = round.answer.toLowerCase();
+      const feedback = card.querySelector('#f4');
+      if (attempt === target){
+        feedback.textContent = '¡Perfecto! Frase correcta. / Perfect — correct sentence!';
+        feedback.className = 'feedback show ok';
+        solvedCount++;
+        const btnRow = document.createElement('div');
+        btnRow.className = 'btn-row';
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn';
+        nextBtn.textContent = index < BUILD_ROUNDS.length - 1 ? 'Siguiente / Next' : 'Ver resultado / See result';
+        nextBtn.onclick = () => {
+          index++;
+          if (index < BUILD_ROUNDS.length) renderRound();
+          else renderFinal();
+        };
+        btnRow.appendChild(nextBtn);
+        card.querySelector('#checkBtn').disabled = true;
+        card.querySelector('#clearBtn').disabled = true;
+        card.appendChild(btnRow);
+      } else {
+        feedback.textContent = 'Todavía no. Revisa el orden de las palabras. / Not yet — check the word order.';
+        feedback.className = 'feedback show bad';
+      }
+    };
+
+    renderBuildArea();
+  }
+
+  function renderBuildArea(){
+    const area = card.querySelector('#buildArea');
+    if (built.length === 0){
+      area.innerHTML = '<span class="placeholder">Toca las palabras abajo / Tap the words below</span>';
+      return;
+    }
+    area.innerHTML = '';
+    built.forEach(w => {
+      const chip = document.createElement('button');
+      chip.className = 'word-chip';
+      chip.textContent = w.text;
+      chip.onclick = () => {
+        built = built.filter(x => x.id !== w.id || x.text !== w.text);
+        card.querySelectorAll('.word-chip.bank').forEach(c => {
+          if (c.textContent === w.text && Number(c.dataset.id) === w.id) c.disabled = false;
+        });
+        renderBuildArea();
+      };
+      area.appendChild(chip);
+    });
+  }
+
+  function renderFinal(){
+    card.innerHTML = `
+      <div class="final-screen">
+        <div class="final-emoji">🧩</div>
+        <div class="big-score">${solvedCount} / ${BUILD_ROUNDS.length}</div>
+        <p>Frases construidas correctamente / Sentences built correctly</p>
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn secondary" id="retryA4">Intentar de nuevo / Try again</button>
+        </div>
+      </div>
+    `;
+    card.querySelector('#retryA4').onclick = () => { index = 0; solvedCount = 0; renderRound(); };
+    markDone(3, `${solvedCount} / ${BUILD_ROUNDS.length}`);
+  }
+
+  renderRound();
+}
+
+/* ==================== Activity 5: Final review quiz ==================== */
+const QUIZ = [
+  { text: "Yo _______ de California.", options: ["es","soy","son","eres"], answer: "soy" },
+  { text: "Ellos _______ mis amigos.", options: ["es","son","soy","eres"], answer: "son" },
+  { text: "En el truco D.O.C.T.O.R., ¿qué representa la 'T'?", options: ["Talento","Trabajo","Tiempo / fecha","Tamaño"], answer: "Tiempo / fecha" },
+  { text: "Vosotros _______ de España.", options: ["sois","somos","son","eres"], answer: "sois" },
+  { text: "Nosotros _______ estudiantes.", options: ["es","somos","son","soy"], answer: "somos" },
+  { text: "\u201cElla es doctora\u201d significa...", options: ["She has a doctor","She is a doctor","She is at the doctor","She was a doctor"], answer: "She is a doctor" },
+  { text: "¿Qué hora es? — \u201c_______ las tres.\u201d", options: ["Es","Son","Somos","Soy"], answer: "Son" },
+  { text: "\u201cTú eres muy amable\u201d corresponde a la categoría...", options: ["Tiempo","Origen","Relación","Características"], answer: "Características" },
+];
+
+function renderActivity5(main){
+  let index = 0, score = 0, locked = false;
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="activity-title">
+      <h2>Actividad 5 · Repaso final</h2>
+      <p>Activity 5: Final review — a mix of everything you practiced today.</p>
+    </div>
+    <div class="card" id="q5card"></div>
+  `;
+  main.appendChild(wrap);
+  const card = wrap.querySelector('#q5card');
+
+  function renderQuestion(){
+    locked = false;
+    const q = QUIZ[index];
+    const opts = shuffle(q.options);
+    card.innerHTML = `
+      <div class="q-count">Pregunta ${index+1} de ${QUIZ.length} / Question ${index+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="choices">${opts.map(o => `<button class="choice-btn" data-opt="${o}">${o}</button>`).join('')}</div>
+      <div class="feedback" id="f5"></div>
+    `;
+    card.querySelectorAll('.choice-btn').forEach(btn => {
+      btn.onclick = () => {
+        if (locked) return;
+        locked = true;
+        const chosen = btn.dataset.opt;
+        const feedback = card.querySelector('#f5');
+        card.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+        if (chosen === q.answer){
+          btn.classList.add('correct');
+          score++;
+          feedback.textContent = '¡Correcto! / Correct!';
+          feedback.className = 'feedback show ok';
+        } else {
+          btn.classList.add('incorrect');
+          card.querySelectorAll('.choice-btn').forEach(b => { if (b.dataset.opt === q.answer) b.classList.add('correct'); });
+          feedback.textContent = `Respuesta correcta: "${q.answer}" / Correct answer: "${q.answer}"`;
+          feedback.className = 'feedback show bad';
+        }
+        const btnRow = document.createElement('div');
+        btnRow.className = 'btn-row';
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn coral';
+        nextBtn.textContent = index < QUIZ.length - 1 ? 'Siguiente / Next' : 'Ver resultado final / See final result';
+        nextBtn.onclick = () => {
+          index++;
+          if (index < QUIZ.length) renderQuestion();
+          else renderFinal();
+        };
+        btnRow.appendChild(nextBtn);
+        card.appendChild(btnRow);
+      };
+    });
+  }
+
+  function renderFinal(){
+    let msgEs, msgEn, emoji;
+    if (score === QUIZ.length){ msgEs = "¡Perfecto! Dominas el verbo SER."; msgEn = "Perfect — you've mastered SER!"; emoji = "🏆"; }
+    else if (score >= QUIZ.length - 2){ msgEs = "¡Muy bien hecho!"; msgEn = "Really well done!"; emoji = "🎉"; }
+    else { msgEs = "¡Buen intento! Repasa y vuelve a intentar."; msgEn = "Good try — review and try again."; emoji = "💪"; }
+    card.innerHTML = `
+      <div class="final-screen">
+        <div class="final-emoji">${emoji}</div>
+        <div class="big-score">${score} / ${QUIZ.length}</div>
+        <p><strong>${msgEs}</strong><br>${msgEn}</p>
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn secondary" id="retryA5">Intentar de nuevo / Try again</button>
+        </div>
+      </div>
+    `;
+    card.querySelector('#retryA5').onclick = () => { index = 0; score = 0; renderQuestion(); };
+    markDone(4, `${score} / ${QUIZ.length}`);
+  }
+
+  renderQuestion();
+}
+
+/* ==================== Activity 6: Share results ==================== */
+function ensureHtml2Canvas(){
+  const loadPromise = new Promise((resolve, reject) => {
+    if (window.html2canvas) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('load-failed'));
+    document.head.appendChild(s);
+  });
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('timeout')), 8000);
+  });
+  return Promise.race([loadPromise, timeoutPromise]);
+}
+
+function renderActivity6(main){
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="activity-title">
+      <h2>Comparte tus resultados</h2>
+      <p>Share your results — send this page to your teacher on Google Classroom.</p>
+    </div>
+    <div class="name-row">
+      <label for="studentNameInput">Tu nombre / Your name:</label>
+      <input type="text" id="studentNameInput" placeholder="Escribe tu nombre / Type your name">
+    </div>
+    <div class="results-card" id="resultsCard"></div>
+    <div class="share-actions">
+      <div class="share-option">
+        <h3>Guarda o comparte una imagen de tus resultados</h3>
+        <p>Save or share a picture of your results directly (great on iPad — you can send it straight to Google Classroom, Files, or Photos).</p>
+        <button class="btn coral" id="shareImgBtn">📤 Guardar / compartir imagen</button>
+        <div class="share-status" id="shareImgStatus"></div>
+      </div>
+      <p class="screenshot-note">Consejo: si no puedes compartir la imagen, toma una captura de pantalla de esta página y súbela a Google Classroom.<br>Tip: if you can't share the image, take a screenshot of this page and upload it to Google Classroom instead.</p>
+    </div>
+  `;
+  main.appendChild(wrap);
+
+  function renderCard(){
+    const card = wrap.querySelector('#resultsCard');
+    const nameInput = wrap.querySelector('#studentNameInput');
+    const name = nameInput.value.trim();
+    const dateStr = new Date().toLocaleDateString();
+    let completedCount = 0;
+    const rowsHtml = ACTIVITIES.slice(0, 5).map((a, i) => {
+      const done = !!activityResults[i];
+      if (done) completedCount++;
+      return `
+        <div class="rc-row">
+          <span class="rc-label">${i + 1}. ${a.es} <em style="font-weight:400;color:var(--muted);">/ ${a.en}</em></span>
+          ${done ? `<span class="rc-score">${activityResults[i]} ✓</span>` : `<span class="rc-pending">Sin completar / Not done</span>`}
+        </div>`;
+    }).join('');
+    card.innerHTML = `
+      <div class="rc-header">
+        <div class="rc-badge">SER</div>
+        <div>
+          <div class="rc-title">${name ? name + ' — ' : ''}Resultados / Results</div>
+          <div class="rc-meta">El verbo SER · ${dateStr}</div>
+        </div>
+      </div>
+      ${rowsHtml}
+      <div class="rc-total">
+        <span>Actividades completadas / Activities completed</span>
+        <span>${completedCount} / 5</span>
+      </div>
+    `;
+  }
+
+  wrap.querySelector('#studentNameInput').addEventListener('input', renderCard);
+  renderCard();
+
+  wrap.querySelector('#shareImgBtn').onclick = async () => {
+    const status = wrap.querySelector('#shareImgStatus');
+    status.textContent = 'Generando imagen... / Generating image...';
+    status.className = 'share-status show ok';
+    try {
+      await ensureHtml2Canvas();
+      const card = wrap.querySelector('#resultsCard');
+      const canvas = await window.html2canvas(card, { scale: 2, backgroundColor: '#ffffff' });
+      canvas.toBlob(async (blob) => {
+        if (!blob){
+          status.textContent = 'No se pudo generar la imagen. Toma una captura de pantalla. / Could not generate the image — please take a screenshot.';
+          status.className = 'share-status show bad';
+          return;
+        }
+        const nameInput = wrap.querySelector('#studentNameInput');
+        const safeName = (nameInput.value.trim() || 'estudiante').replace(/[^a-z0-9]+/gi, '_');
+        const fileName = `SER_resultados_${safeName}.png`;
+        const file = new File([blob], fileName, { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })){
+          try {
+            await navigator.share({ files: [file], title: 'Resultados — El verbo SER', text: 'Mis resultados de las actividades de SER' });
+            status.textContent = '¡Compartido! / Shared!';
+            status.className = 'share-status show ok';
+            return;
+          } catch (shareErr){
+            // user cancelled the share sheet — fall through to download
+          }
+        }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        status.textContent = 'Imagen guardada. Súbela a Google Classroom. / Image saved — upload it to Google Classroom.';
+        status.className = 'share-status show ok';
+      }, 'image/png');
+    } catch (e){
+      status.textContent = 'No se pudo generar la imagen (¿sin conexión?). Toma una captura de pantalla en su lugar. / Could not generate the image (no connection?) — please take a screenshot instead.';
+      status.className = 'share-status show bad';
+    }
+  };
+}
+
+/* ==================== Init ==================== */
+showActivity(0);
+</script>
+</body>
+</html>
